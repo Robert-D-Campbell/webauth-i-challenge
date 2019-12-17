@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 
 const router = require("express").Router();
 
+const restricted = require("../middleware/restricted-middleware");
 const Users = require("../users/users-model.js");
 
 router.post("/register", (req, res) => {
@@ -31,6 +32,7 @@ router.post("/login", (req, res) => {
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
+        req.session.user = user;
         // in here with .compare()
         // change the users-model findBy() to return the password as well
         res.status(200).json({ message: `Welcome ${user.username}!` });
